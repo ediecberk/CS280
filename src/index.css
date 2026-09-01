@@ -5,8 +5,12 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-padding-top: 5rem;
+    scroll-behavior: smooth;
+  }
+
   html, body {
-    overflow-x: hidden;
     background-color: #020617; /* slate-950 */
   }
 
