@@ -276,21 +276,6 @@ export default function App() {
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-950/90 py-8 text-center text-xs text-slate-500 shrink-0">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} Ethan Diec • CS280 Computer Vision Portfolio</p>
-          <div className="flex items-center space-x-4 text-slate-400">
-            <a href="https://github.com/ediecberk" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">
-              <GithubIcon className="w-4 h-4" />
-            </a>
-            <a href="https://linkedin.com/diecethan" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">
-              <LinkedinIcon className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
