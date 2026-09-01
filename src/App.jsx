@@ -43,10 +43,9 @@ export default function App() {
         'Analyzed perspective distortion across wide-angle to telephoto focal lengths.',
         'Evaluated field of view (FOV) and optical geometric compression.'
       ],
-      techStack: ['Photography', 'Optics', 'Dolly Zoom', 'Python', 'OpenCV'],
+      // techStack: ['Photography', 'Optics', 'Dolly Zoom', 'Python', 'OpenCV'],
       githubUrl: 'https://github.com/ediecberk/cs280-project-0',
-      demoUrl: 'https://github.com/ediecberk/cs280-project-0#writeup',
-      badge: 'CS280 Core Project'
+      demoUrl: 'https://github.com/ediecberk/cs280-project-0#writeup'
     }
   ];
 
@@ -63,7 +62,7 @@ export default function App() {
       <div className="glow-effect w-[400px] h-[400px] bg-blue-500 bottom-[-100px] left-[20%]" />
 
       {/* Header Navigation */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80 transition-all">
+      <header className="fixed top-0 left-0 right-0 z-50 shrink-0 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
@@ -100,7 +99,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-16">
+      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 w-full space-y-16">
         
         {/* HERO SECTION */}
         <section id="about" className="relative pt-6 pb-4">
@@ -120,12 +119,8 @@ export default function App() {
 
           <h2 className="text-xl sm:text-2xl font-semibold text-slate-300 mb-6 flex items-center gap-2">
             <Cpu className="w-5 h-5 text-cyan-400 inline" />
-            <span>Computer Vision</span>
+            <span>These are my super cool CS280 projects :)</span>
           </h2>
-
-          <p className="text-slate-400 text-base sm:text-lg max-w-3xl leading-relaxed mb-8">
-            These are my super cool CS280 projects :)
-          </p>
 
           <div className="flex flex-wrap items-center gap-4">
             <a
@@ -133,16 +128,15 @@ export default function App() {
               className="px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-2"
             >
               <span>Explore Projects</span>
-              <ChevronDown className="w-4 h-4" />
             </a>
             <a
-              href="https://github.com/ediecberk"
+              href="https://github.com/ediecberk/CS280/src/pages"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium transition-all flex items-center space-x-2"
             >
               <GithubIcon className="w-4 h-4 text-cyan-400" />
-              <span>GitHub Repositories</span>
+              <span>Project Directories</span>
             </a>
           </div>
         </section>
@@ -151,15 +145,8 @@ export default function App() {
         <section id="projects" className="space-y-6 pt-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between pb-4 border-b border-slate-800">
             <div>
-              <div className="flex items-center space-x-2 text-cyan-400 text-sm font-mono mb-1">
-                <Layers className="w-4 h-4" />
-                <span>INTERACTIVE ACCORDION</span>
-              </div>
               <h2 className="text-3xl font-bold text-white tracking-tight">Featured Projects</h2>
             </div>
-            <p className="text-slate-400 text-sm mt-2 md:mt-0">
-              Click a project header to expand details and inspect tech stack.
-            </p>
           </div>
 
           {/* Accordion Container */}
@@ -273,16 +260,6 @@ export default function App() {
                         {/* Action Buttons: GitHub Repository & Demo */}
                         <div className="pt-2 flex flex-wrap items-center gap-3">
                           <a
-                            href={project.githubUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-600 text-xs font-medium transition-all shadow-sm"
-                          >
-                            <GithubIcon className="w-4 h-4 text-cyan-400" />
-                            <span>View GitHub Repository</span>
-                            <ExternalLink className="w-3 h-3 text-slate-400 ml-1" />
-                          </a>
-                          <a
                             href={project.demoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -303,7 +280,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-950/90 py-8 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-800/80 bg-slate-950/90 py-8 text-center text-xs text-slate-500 shrink-0">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} Ethan Diec • CS280 Computer Vision Portfolio</p>
           <div className="flex items-center space-x-4 text-slate-400">
