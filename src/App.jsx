@@ -35,13 +35,12 @@ export default function App() {
     {
       id: 'project-0',
       title: 'Project 0: Becoming Friends with Your Camera',
-      subtitle: 'Perspective & Optics Analysis',
       description:
         'This project explores the relationship between perspective, focal length, zoom, and camera position. It captures and compares portraits, architectural scenes, and a dolly zoom sequence to demonstrate perspective distortion and compression through photography.',
       highlights: [
-        'Captured dolly zoom (Vertigo effect) sequence by varying focal length & subject distance.',
-        'Analyzed perspective distortion across wide-angle to telephoto focal lengths.',
-        'Evaluated field of view (FOV) and optical geometric compression.'
+        'Part 1: Selfie: The Wrong Way vs. The Right Way',
+        'Part 2: Architectural Perspective Compression',
+        'Part 3: The Dolly Zoom'
       ],
       // techStack: ['Photography', 'Optics', 'Dolly Zoom', 'Python', 'OpenCV'],
       githubUrl: 'https://github.com/ediecberk/cs280-project-0',
@@ -55,13 +54,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 bg-grid-pattern relative overflow-x-hidden flex flex-col">
+    <div className="min-h-screen bg-slate-950 text-slate-100 bg-grid-pattern relative flex flex-col">
       {/* Decorative Glow Elements */}
       <div className="glow-effect w-[500px] h-[500px] bg-cyan-500 top-[-100px] left-[-100px]" />
       <div className="glow-effect w-[600px] h-[600px] bg-indigo-600 top-[30%] right-[-200px]" />
       <div className="glow-effect w-[400px] h-[400px] bg-blue-500 bottom-[-100px] left-[20%]" />
 
-      {/* Header Navigation */}
+      {/* Header Navigation - Fixed at top */}
       <header className="fixed top-0 left-0 right-0 z-50 shrink-0 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -99,10 +98,10 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 w-full space-y-16">
+      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 w-full space-y-10">
         
         {/* HERO SECTION */}
-        <section id="about" className="relative pt-6 pb-4">
+        <section id="about" className="relative pt-2 pb-2">
           
           
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-6">
@@ -142,7 +141,7 @@ export default function App() {
         </section>
 
         {/* PROJECTS SECTION WITH ACCORDION COMPONENTS */}
-        <section id="projects" className="space-y-6 pt-4">
+        <section id="projects" className="space-y-6 pt-2">
           <div className="flex flex-col md:flex-row md:items-end justify-between pb-4 border-b border-slate-800">
             <div>
               <h2 className="text-3xl font-bold text-white tracking-tight">Featured Projects</h2>
@@ -189,7 +188,6 @@ export default function App() {
                             {project.badge}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-400 mt-0.5 font-mono">{project.subtitle}</p>
                       </div>
                     </div>
 
@@ -224,7 +222,7 @@ export default function App() {
                         {project.highlights && project.highlights.length > 0 && (
                           <div>
                             <h4 className="text-xs font-mono uppercase text-slate-400 tracking-wider mb-2">
-                              Key Results & Features
+                              Project Features
                             </h4>
                             <ul className="space-y-1.5">
                               {project.highlights.map((item, idx) => (
