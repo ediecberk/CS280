@@ -24,6 +24,13 @@ const LinkedinIcon = ({ className = "w-4 h-4" }) => (
 export default function Home() {
   const [activeProject, setActiveProject] = useState('project-0');
 
+  const scrollToProjects = () => {
+    const section = document.getElementById('projects');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const projects = [
     {
       id: 'project-0',
@@ -68,12 +75,6 @@ export default function Home() {
           </div>
 
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <a href="#about" className="text-slate-300 hover:text-cyan-400 transition-colors">
-              About
-            </a>
-            <a href="#projects" className="text-slate-300 hover:text-cyan-400 transition-colors">
-              Projects
-            </a>
             <a
               href="https://github.com/ediecberk"
               target="_blank"
@@ -110,12 +111,13 @@ export default function Home() {
             </h2>
 
             <div className="flex flex-wrap items-center gap-4">
-              <a
-                href="#projects"
+              <button
+                type="button"
+                onClick={scrollToProjects}
                 className="px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-2"
               >
                 <span>Explore Projects</span>
-              </a>
+              </button>
               <a
                 href="https://github.com/ediecberk/CS280"
                 target="_blank"
