@@ -194,7 +194,7 @@ function PipelineRows({ images }) {
           {ADVANCED_STEPS.map((step) => (
             <ImageCard
               key={step.key}
-              src={publicUrl(`project-1/advanced/${step.folder}/${image.id}.jpg`)}
+              src={publicUrl(`p1/advanced/${step.folder}/${image.id}.jpg`)}
               label={step.label}
               caption={step.label}
             />
@@ -405,7 +405,7 @@ export default function ProjectOne() {
             </div>
             <ResultGrid
               images={JPG_RESULTS}
-              srcFor={(image) => publicUrl(`project-1/basics/single/${image.id}.jpg`)}
+              srcFor={(image) => publicUrl(`p1/basics/single/${image.id}.jpg`)}
               offsets={SINGLE_OFFSETS}
             />
           </div>
@@ -416,7 +416,7 @@ export default function ProjectOne() {
             </div>
             <ResultGrid
               images={PROVIDED_RESULTS}
-              srcFor={(image) => publicUrl(`project-1/basics/${image.id}.jpg`)}
+              srcFor={(image) => publicUrl(`p1/basics/${image.id}.jpg`)}
             />
           </div>
 
@@ -429,7 +429,7 @@ export default function ProjectOne() {
             </div>
             <ResultGrid
               images={EXTRA_RESULTS}
-              srcFor={(image) => publicUrl(`project-1/basics/${image.id}.jpg`)}
+              srcFor={(image) => publicUrl(`p1/basics/${image.id}.jpg`)}
             />
           </div>
 
