@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-padding-top: 5rem;
+    scroll-behavior: smooth;
+  }
+
+  html, body {
+    background-color: #020617; /* slate-950 */
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200 min-h-screen;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom subtle glassmorphism & background effects */
+.bg-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.glow-effect {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sonar-ring {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 0;
+  }
+}
+
+.sonar-sweep {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(34, 211, 238, 0.45) 55deg,
+    transparent 80deg
+  );
+  animation: radar-sweep 4s linear infinite;
+}
+
+.sonar-ping {
+  animation: sonar-ring 2.6s ease-out infinite;
+}
+
+.sonar-ping-delayed {
+  animation: sonar-ring 2.6s ease-out 1.3s infinite;
+}
+
+.cal-bear {
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.cal-bear ellipse,
+.cal-bear circle,
+.cal-bear rect {
+  fill: #fdb515;
+}
+
+.cal-bear .bear-eye {
+  fill: #003262;
+}
+
+.cal-bear .bear-leg-rear-right rect,
+.cal-bear .bear-leg-front-right rect {
+  fill: #d49a12;
+}
+
+.bear-bob {
+  animation: bear-bob 0.36s ease-in-out infinite;
+}
+
+.bear-leg {
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: bear-step 0.72s linear infinite;
+}
+
+.bear-leg-rear-left {
+  animation-delay: 0s;
+}
+
+.bear-leg-front-left {
+  animation-delay: -0.18s;
+}
+
+.bear-leg-rear-right {
+  animation-delay: -0.36s;
+}
+
+.bear-leg-front-right {
+  animation-delay: -0.54s;
+}
+
+@keyframes bear-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+}
+
+@keyframes bear-step {
+  0% {
+    transform: rotate(14deg) translateY(0);
+  }
+  20% {
+    transform: rotate(4deg) translateY(-2.4px);
+  }
+  35% {
+    transform: rotate(-14deg) translateY(0);
+  }
+  100% {
+    transform: rotate(14deg) translateY(0);
+  }
+}
