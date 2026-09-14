@@ -547,6 +547,26 @@ export default function ProjectOne() {
               </ul>
             </li>
             <li>
+              White Balancing
+              <ul className="mt-2 space-y-2 list-disc text-slate-400">
+                <li>
+                  The color of the light that hit the scene affects the whole photo, known as the illuminant.
+                  If it was a bit yellow or green, the whole photo looks tinted, including things that should be
+                  white or gray.
+                </li>
+                <li>
+                  To estimate the illuminant, I take the mean R, mean G, and mean B over every pixel. (i.e. [0.4, 0.5, 0.3])
+                </li>
+                <li>
+                  To neutralize the tint, I want that average to be gray (average of R, G, and B means [0.4]).
+                  I then scale each channel by{' '}
+                  <span className="font-mono text-cyan-300">gray / that channel's mean</span>.
+                  Then I clip to{' '} <span className="font-mono text-cyan-300">[0, 1]</span>.
+                  So, in our example, the red plate pixels would be multiplied by 0.4 / 0.4 = 1, the green plate by 0.4 / 0.5 = 0.8, and the blue plate by 0.4 / 0.3 = 1.33.
+                </li>
+              </ul>
+            </li>
+            <li>
               Color Mapping
               <ul className="mt-2 space-y-2 list-disc text-slate-400">
                 <li>
@@ -578,26 +598,6 @@ export default function ProjectOne() {
                 </li>
               </ul>
             </li>
-            <li>
-              White Balancing
-              <ul className="mt-2 space-y-2 list-disc text-slate-400">
-                <li>
-                  The color of the light that hit the scene affects the whole photo, known as the illuminant.
-                  If it was a bit yellow or green, the whole photo looks tinted, including things that should be
-                  white or gray.
-                </li>
-                <li>
-                  To estimate the illuminant, I take the mean R, mean G, and mean B over every pixel. (i.e. [0.4, 0.5, 0.3])
-                </li>
-                <li>
-                  To neutralize the tint, I want that average to be gray (average of R, G, and B means [0.4]).
-                  I then scale each channel by{' '}
-                  <span className="font-mono text-cyan-300">gray / that channel's mean</span>.
-                  Then I clip to{' '} <span className="font-mono text-cyan-300">[0, 1]</span>.
-                  So, in our example, the red plate pixels would be multiplied by 0.4 / 0.4 = 1, the green plate by 0.4 / 0.5 = 0.8, and the blue plate by 0.4 / 0.3 = 1.33.
-                </li>
-              </ul>
-            </li>
           </ol>
 
           <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-3">
@@ -622,14 +622,14 @@ export default function ProjectOne() {
                 range, so the images look more lively.
               </p>
               <p>
-                <span className="font-semibold text-white">Color mapping.</span> Mixing a little
-                of each neighboring plate makes the color look less harsh. They're less like three
-                filters stacked and more like one photo.
-              </p>
-              <p>
                 <span className="font-semibold text-white">White balance.</span> Some plates come
                 out with a tint (too green, too yellow). Pushing the average color toward gray
                 makes whites look closer to white.
+              </p>
+              <p>
+                <span className="font-semibold text-white">Color mapping.</span> Mixing a little
+                of each neighboring plate makes the color look less harsh. They're less like three
+                filters stacked and more like one photo.
               </p>
             </div>
           </div>
@@ -685,6 +685,36 @@ export default function ProjectOne() {
             <p className="text-sm text-slate-400">
                 My post-processing is not as advanced as the LoC's, so the results are not as good.
                 However, the alignment looks very similar, and I am pretty happy with the results!
+            </p>
+            <p className="text-sm text-slate-400">
+              Links to images:{' '}
+              <a
+                href="https://www.loc.gov/item/2018679048/"
+                className="text-cyan-400 hover:underline"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Piony
+              </a>
+              ,{' '}
+              <a
+                href="https://www.loc.gov/item/2018679151/"
+                className="text-cyan-400 hover:underline"
+                target="_blank"
+                rel="noreferrer"
+                >
+                Cathedral Monument
+              </a>
+              ,{' '}
+              <a
+                href="https://www.loc.gov/item/2018679060/"
+                className="text-cyan-400 hover:underline"
+                target="_blank"
+                rel="noreferrer"
+              >
+                V Imienii Daniia
+              </a>
+              .
             </p>
           </div>
           <div className="space-y-10">
