@@ -158,12 +158,16 @@ export default function Home() {
       id: 'project-2',
       title: 'Project 2: Fun with Filters and Frequencies',
       description:
-        'This project builds 2D convolution from scratch, then uses finite differences and a Gaussian to find edges. Part 1 is the filters. The box blur, Dx, and Dy are the same sliding weighted sum with different weights.',
+        'This project builds 2D convolution from scratch, then uses finite differences and a Gaussian to find edges. The box blur, Dx, and Dy are the same sliding weighted sum with different weights. Part 2 uses those filters on frequencies: an unsharp mask to sharpen a photo, hybrid images that change with viewing distance, and a stack that blends two photos across a seam.',
       highlights: [
         'Part 1.1: Convolution with four loops, then two, checked against SciPy',
         'Part 1.2: Finite-difference edges on the cameraman',
         'Part 1.3: Derivative of Gaussian',
-        'Bells & Whistles: gradient orientation in HSV',
+        'Part 1 Bells & Whistles: gradient orientation in HSV',
+        'Part 2.1: Unsharp mask on the Taj Mahal',
+        'Part 2.2: Hybrid images, with color on the low band, the high band, or both',
+        'Part 2.3: Gaussian and Laplacian stacks',
+        'Part 2.4: Multiresolution blending, the oraple and two custom seams',
       ],
       internalRoute: '/project-2',
     },
