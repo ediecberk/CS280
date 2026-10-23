@@ -171,6 +171,22 @@ export default function Home() {
       ],
       internalRoute: '/project-2',
     },
+    {
+      id: 'project-3',
+      title: 'Project 3: Flow Models',
+      description:
+        'Part A samples and edits 512×512 images with a pretrained flow model. Part B trains a UNet on MNIST from scratch: a one-step denoiser, then flow matching conditioned on time and on the digit class.',
+      highlights: [
+        'Part A: noisy inputs, one-step denoising, Euler sampling, and classifier-free guidance',
+        'Part A: text edits, visual anagrams, and hybrid images',
+        'Part A bells: a 90° anagram, an inner-disk anagram, and a course logo',
+        'Part B: a denoiser at σ = 0.5, then the same network on pure noise',
+        'Part B: time-conditioned flow matching, sampled at epochs 1, 5, and 10',
+        'Part B: class conditioning with guidance 5, and a run without the learning-rate scheduler',
+        'Part B bells: the time-only model trained through epoch 20',
+      ],
+      internalRoute: '/project-3',
+    },
   ];
 
   const toggleProject = (id) => {
