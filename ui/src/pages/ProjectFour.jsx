@@ -37,6 +37,162 @@ function CodeBlock({ children }) {
   );
 }
 
+function formatH(rows) {
+  const cell = (v) =>
+    Math.abs(v) > 0 && Math.abs(v) < 1e-3 ? v.toExponential(3) : Number(v.toFixed(6)).toString();
+  return rows.map((row) => `[${row.map(cell).join(', ')}]`).join(',\n ');
+}
+
+function PointTable({ srcLabel, dstLabel, points }) {
+  return (
+    <div className="overflow-x-auto rounded-lg border border-slate-800">
+      <table className="w-full text-xs sm:text-sm text-left font-mono">
+        <thead className="bg-slate-950 text-slate-400">
+          <tr>
+            <th className="px-3 py-2 font-medium">#</th>
+            <th className="px-3 py-2 font-medium">{srcLabel}</th>
+            <th className="px-3 py-2 font-medium">{dstLabel}</th>
+          </tr>
+        </thead>
+        <tbody className="text-slate-200">
+          {points.map((p) => (
+            <tr key={p.n} className="border-t border-slate-800">
+              <td className="px-3 py-1.5 text-slate-400">{p.n}</td>
+              <td className="px-3 py-1.5">
+                ({p.src[0].toFixed(1)}, {p.src[1].toFixed(1)})
+              </td>
+              <td className="px-3 py-1.5">
+                ({p.dst[0].toFixed(1)}, {p.dst[1].toFixed(1)})
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function PairBlock({ title, srcLabel, dstLabel, points, H }) {
+  return (
+    <div className="space-y-3">
+      <h4 className="text-sm font-semibold text-cyan-300 font-mono">{title}</h4>
+      <PointTable srcLabel={srcLabel} dstLabel={dstLabel} points={points} />
+      <CodeBlock>{`H =\n[[ ${formatH(H)} ]]`}</CodeBlock>
+    </div>
+  );
+}
+
+const HOMOGRAPHY_DATA = {
+  courtyard: {
+    left: {
+      points: [
+        { n: 1, src: [660.2, 699.9], dst: [366.9, 681.9] },
+        { n: 2, src: [345.6, 88.0], dst: [37.4, 62.3] },
+        { n: 3, src: [314.2, 1122.5], dst: [14.2, 1119.0] },
+        { n: 4, src: [866.8, 211.3], dst: [561.8, 198.4] },
+        { n: 5, src: [842.2, 1167.6], dst: [544.7, 1138.8] },
+        { n: 6, src: [338.2, 476.9], dst: [35.4, 459.4] },
+        { n: 7, src: [350.4, 802.1], dst: [50.9, 792.0] },
+        { n: 8, src: [616.7, 376.6], dst: [319.5, 359.4] },
+      ],
+      H: [
+        [1.0812, 0.008384, -332.4249],
+        [0.040093, 1.0577, -44.26201],
+        [8.587e-5, 3.703e-6, 1.0],
+      ],
+    },
+    right: {
+      points: [
+        { n: 1, src: [327.4, 750.5], dst: [672.5, 747.5] },
+        { n: 2, src: [72.3, 247.7], dst: [427.2, 245.8] },
+        { n: 3, src: [47.9, 1189.5], dst: [397.2, 1172.2] },
+        { n: 4, src: [534.1, 1166.9], dst: [885.1, 1176.6] },
+        { n: 5, src: [517.3, 328.8], dst: [874.2, 320.4] },
+        { n: 6, src: [14.0, 603.0], dst: [365.7, 595.2] },
+        { n: 7, src: [60.1, 898.1], dst: [408.8, 885.3] },
+        { n: 8, src: [263.5, 465.4], dst: [611.7, 460.6] },
+      ],
+      H: [
+        [0.925799, -0.003849, 354.7876],
+        [-0.03936, 0.977774, 5.45711],
+        [-8.519e-5, 3.699e-7, 1.0],
+      ],
+    },
+  },
+  livingroom: {
+    left: {
+      points: [
+        { n: 1, src: [645.4, 684.1], dst: [188.3, 680.6] },
+        { n: 2, src: [834.0, 701.3], dst: [366.4, 685.1] },
+        { n: 3, src: [534.6, 584.6], dst: [62.7, 580.5] },
+        { n: 4, src: [569.2, 753.6], dst: [106.0, 760.1] },
+        { n: 5, src: [741.7, 675.0], dst: [283.9, 665.6] },
+        { n: 6, src: [651.8, 604.8], dst: [194.4, 599.9] },
+        { n: 7, src: [540.2, 660.9], dst: [73.0, 663.2] },
+        { n: 8, src: [668.9, 749.6], dst: [212.5, 745.4] },
+      ],
+      H: [
+        [1.948053, 0.051877, -970.5362],
+        [0.515658, 1.852133, -434.8015],
+        [0.000935, 0.000157, 1.0],
+      ],
+    },
+    right: {
+      points: [
+        { n: 1, src: [180.0, 1098.9], dst: [581.1, 1109.1] },
+        { n: 2, src: [64.6, 563.7], dst: [419.9, 578.1] },
+        { n: 3, src: [405.1, 737.5], dst: [767.2, 769.6] },
+        { n: 4, src: [203.6, 752.5], dst: [561.8, 764.7] },
+        { n: 5, src: [20.7, 741.6], dst: [395.6, 738.7] },
+        { n: 6, src: [341.2, 1095.5], dst: [746.6, 1146.2] },
+        { n: 7, src: [65.0, 1162.9], dst: [478.5, 1145.5] },
+        { n: 8, src: [247.4, 642.8], dst: [592.7, 659.0] },
+      ],
+      H: [
+        [0.647731, 0.065413, 313.5923],
+        [-0.172879, 0.813485, 95.34769],
+        [-0.000335, -6.908e-5, 1.0],
+      ],
+    },
+  },
+  laundry: {
+    left: {
+      points: [
+        { n: 1, src: [700.4, 897.8], dst: [198.6, 859.8] },
+        { n: 2, src: [753.1, 141.4], dst: [218.3, 102.0] },
+        { n: 3, src: [694.4, 1102.7], dst: [205.0, 1058.5] },
+        { n: 4, src: [702.3, 329.3], dst: [177.2, 289.5] },
+        { n: 5, src: [874.8, 965.5], dst: [356.2, 887.3] },
+        { n: 6, src: [521.7, 847.7], dst: [16.5, 845.9] },
+        { n: 7, src: [817.5, 843.3], dst: [306.0, 787.2] },
+        { n: 8, src: [724.3, 831.2], dst: [218.1, 790.7] },
+      ],
+      H: [
+        [1.528444, 0.080411, -841.7709],
+        [0.222694, 1.52509, -234.855],
+        [0.000614, 7.89e-5, 1.0],
+      ],
+    },
+    right: {
+      points: [
+        { n: 1, src: [310.2, 886.4], dst: [664.5, 860.6] },
+        { n: 2, src: [36.1, 722.6], dst: [396.9, 667.1] },
+        { n: 3, src: [495.0, 968.9], dst: [882.3, 986.9] },
+        { n: 4, src: [330.2, 690.0], dst: [680.2, 659.6] },
+        { n: 5, src: [130.7, 878.9], dst: [485.7, 826.6] },
+        { n: 6, src: [445.7, 794.9], dst: [818.0, 783.4] },
+        { n: 7, src: [177.3, 659.5], dst: [523.0, 617.1] },
+        { n: 8, src: [222.8, 786.1], dst: [575.4, 746.2] },
+      ],
+      H: [
+        [0.72458, 0.0354, 344.4597],
+        [-0.164487, 0.948823, -13.82355],
+        [-0.00036, 1.438e-5, 1.0],
+      ],
+    },
+  },
+};
+
 export default function ProjectFour() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 bg-grid-pattern relative flex flex-col">
@@ -133,92 +289,90 @@ export default function ProjectFour() {
           />
         </section>
 
-        <section id="homography" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
+        <section id="homography" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-8">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Code2 className="w-5 h-5 text-cyan-400" />
             <span>Part A.2: Recover Homographies</span>
           </h2>
           <p className="text-slate-300 leading-relaxed">
-            A homography is a 3×3 matrix that says where each pixel of one
-            photo should land in the other. The bottom-right entry is just a
-            scale, so I set it to 1 and solve for the other eight numbers. One
-            matching point{' '}
-            <span className="font-mono text-cyan-300">(x, y)</span> in the
-            first photo and{' '}
-            <span className="font-mono text-cyan-300">(x′, y′)</span> in the
-            second gives two equations.
+            Each matching point in one photo and the other gives two rows of the
+            system that solves for H. Stack many of those rows and solve for the
+            eight unknowns.
           </p>
-          <CodeBlock>{`[ x  y  1  0  0  0  -x' x  -x' y ]   [h11]   [x']
-[ 0  0  0  x  y  1  -y' x  -y' y ] · [h12] = [y']
-                                  [h13]
-                                  [h21]
-                                  [h22]
-                                  [h23]
-                                  [h31]
-                                  [h32]`}</CodeBlock>
-          <p className="text-slate-300 leading-relaxed">
-            Four matching points are enough to pin down H. I use more than
-            four and find the best fit for the extras. The matches themselves
-            come from SIFT. I keep a match when its best partner looks clearly
-            better than the second-best, throw out the bad ones with RANSAC,
-            and then refit{' '}
-            <span className="font-mono text-cyan-300">computeH</span> on what
-            is left. The RANSAC loop and the solve are mine.{' '}
-            <span className="font-mono text-cyan-300">cv2.findHomography</span>{' '}
-            is not used.
-          </p>
-          <p className="text-slate-300 leading-relaxed">
-            Products like{' '}
-            <span className="font-mono text-cyan-300">x′x</span> get huge when
-            the coordinates are in pixels. For the courtyard left-to-center
-            pair, that raw setup is badly scaled (condition number about
-            1.3×10⁷). So I first move each point set to its center and shrink
-            it to a fixed size, solve there, and undo the scaling afterward.
-          </p>
-          <p className="text-slate-300 leading-relaxed">
-            One good match from that pair is{' '}
-            <span className="font-mono text-cyan-300">(660.2, 699.9)</span> in
-            the left photo and{' '}
-            <span className="font-mono text-cyan-300">(366.9, 681.9)</span> in
-            the center. It adds two of the 1446 rows. The fit itself uses all
-            723 good matches.
-          </p>
-          <CodeBlock>{`H, left → center, courtyard
-[[ 1.081    0.008   -332.425 ]
- [ 0.040    1.058    -44.262 ]
- [ 0.000086  0.000004   1.000 ]]`}</CodeBlock>
-          <p className="text-slate-300 leading-relaxed">
-            After the refit, the average miss, in pixels of the 1200-long
-            photo:
-          </p>
-          <CodeBlock>{`courtyard    left    723 matches kept   1.05 px
-courtyard    right   903 matches kept   1.09 px
-living room  left     83 matches kept   0.58 px
-living room  right   161 matches kept   1.52 px
-laundry      left     29 matches kept   1.39 px
-laundry      right   227 matches kept   1.67 px`}</CodeBlock>
-          <p className="text-slate-300 leading-relaxed">
-            The laundry left pair keeps the fewest matches. The overlap there
-            is mostly the doorway and the machines, and not much else stays
-            fixed. The matches that remain still land within about 1.4 pixels.
-          </p>
-          <p className="text-slate-300 leading-relaxed">
-            The figures show 12 of the good matches, spread across the
-            overlap. The homography uses every good match, not just the ones
-            drawn.
-          </p>
-          <Figure
-            src={publicUrl('p4/courtyard_matches.jpg')}
-            caption="Courtyard matches. Top is left against center, bottom is right against center"
-          />
-          <Figure
-            src={publicUrl('p4/livingroom_matches.jpg')}
-            caption="Living room matches. They sit on the window, the frames, and the furniture"
-          />
-          <Figure
-            src={publicUrl('p4/laundry_matches.jpg')}
-            caption="Laundry matches. Fewer on the left pair, where the overlap is narrower"
-          />
+          <CodeBlock>{`[x, y, 1, 0, 0, 0, -x'x, -x'y] h = x'
+[0, 0, 0, x, y, 1, -y'x, -y'y] h = y'`}</CodeBlock>
+
+          <div className="space-y-6">
+            <h3 className="text-base font-semibold text-white">Courtyard</h3>
+            <Figure
+              src={publicUrl('p4/courtyard_matches.jpg')}
+              caption="Courtyard matches. Top left→center, bottom right→center"
+            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <PairBlock
+                title="Left → center"
+                srcLabel="Left (x, y)"
+                dstLabel="Center (x, y)"
+                points={HOMOGRAPHY_DATA.courtyard.left.points}
+                H={HOMOGRAPHY_DATA.courtyard.left.H}
+              />
+              <PairBlock
+                title="Right → center"
+                srcLabel="Right (x, y)"
+                dstLabel="Center (x, y)"
+                points={HOMOGRAPHY_DATA.courtyard.right.points}
+                H={HOMOGRAPHY_DATA.courtyard.right.H}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-base font-semibold text-white">Living room</h3>
+            <Figure
+              src={publicUrl('p4/livingroom_matches.jpg')}
+              caption="Living room matches. Top left→center, bottom right→center"
+            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <PairBlock
+                title="Left → center"
+                srcLabel="Left (x, y)"
+                dstLabel="Center (x, y)"
+                points={HOMOGRAPHY_DATA.livingroom.left.points}
+                H={HOMOGRAPHY_DATA.livingroom.left.H}
+              />
+              <PairBlock
+                title="Right → center"
+                srcLabel="Right (x, y)"
+                dstLabel="Center (x, y)"
+                points={HOMOGRAPHY_DATA.livingroom.right.points}
+                H={HOMOGRAPHY_DATA.livingroom.right.H}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-base font-semibold text-white">Laundry</h3>
+            <Figure
+              src={publicUrl('p4/laundry_matches.jpg')}
+              caption="Laundry matches. Top left→center, bottom right→center"
+            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <PairBlock
+                title="Left → center"
+                srcLabel="Left (x, y)"
+                dstLabel="Center (x, y)"
+                points={HOMOGRAPHY_DATA.laundry.left.points}
+                H={HOMOGRAPHY_DATA.laundry.left.H}
+              />
+              <PairBlock
+                title="Right → center"
+                srcLabel="Right (x, y)"
+                dstLabel="Center (x, y)"
+                points={HOMOGRAPHY_DATA.laundry.right.points}
+                H={HOMOGRAPHY_DATA.laundry.right.H}
+              />
+            </div>
+          </div>
         </section>
 
         <section id="warp" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
