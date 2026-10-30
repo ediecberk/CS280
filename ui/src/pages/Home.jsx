@@ -187,6 +187,20 @@ export default function Home() {
       ],
       internalRoute: '/project-3',
     },
+    {
+      id: 'project-4',
+      title: 'Project 4: Image Warping and Mosaicing',
+      description:
+        'Part A stitches photos I took from one spot into wider views. Side photos are lined up with the center, stretched to match, and blended. The same stretch makes a fridge and a microwave door look flat. The courtyard is also wrapped onto a cylinder.',
+      highlights: [
+        'A.1: Courtyard, living room, and laundry, three views each',
+        'A.2: computeH finds the lineup; 723 good matches on the courtyard at 1.05 px',
+        'A.3: Nearest neighbor and bilinear sampling on the fridge and microwave',
+        'A.4: Three mosaics, with a hard seam next to a soft blend',
+        'A.5: Courtyard on a cylinder, radius 1781 px',
+      ],
+      internalRoute: '/project-4',
+    },
   ];
 
   const toggleProject = (id) => {
