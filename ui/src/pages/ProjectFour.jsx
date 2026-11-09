@@ -7,7 +7,10 @@ import {
   Camera,
   Code2,
   Grid3x3,
+  Images,
   List,
+  RotateCw,
+  Scan,
 } from 'lucide-react';
 
 function publicUrl(path) {
@@ -221,19 +224,11 @@ export default function ProjectFour() {
       <main className="relative z-10 flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8 w-full space-y-12">
         <section className="space-y-4 border-b border-slate-800 pb-8">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-            Project 4: Image Warping and Mosaicing{' '}
+            Project 4: Stitching Photo Mosaics{' '}
             <Aperture className="inline-block w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-cyan-400" />
           </h1>
           <p className="text-slate-300 leading-relaxed max-w-3xl">
-            Part A turns a few photos from one spot into a wider view. I find
-            how each side photo lines up with the center one, stretch the side
-            photos to match, and smooth the overlap. The same stretch also
-            makes a fridge and a microwave door look flat and front-facing. I
-            wrap the courtyard onto a cylinder as well.
-          </p>
-          <p className="text-slate-300 leading-relaxed max-w-3xl">
-            Before any of that, every photo is resized so its long side is
-            1200 pixels. The errors below are in those pixels.
+            Photos are 1200 px on the long side.
           </p>
         </section>
 
@@ -244,12 +239,17 @@ export default function ProjectFour() {
           </h2>
           <nav className="space-y-1 text-sm">
             {[
-              ['shoot', 'A.1 Shoot the Pictures', 'Courtyard, living room, and laundry, three views each'],
-              ['homography', 'A.2 Recover Homographies', 'How the photos are lined up, and the six fits'],
-              ['warp', 'A.3 Warp the Images', 'Two ways to fill in pixels, on the fridge and the microwave'],
-              ['mosaic', 'A.4 Blend into a Mosaic', 'A hard seam, then a soft blend, on all three sets'],
-              ['cylinder', 'A.5 Cylindrical Mosaic', 'The courtyard wrapped onto a cylinder'],
-            ].map(([id, title, blurb]) => (
+              ['shoot', 'A.1 Shoot the Pictures'],
+              ['homography', 'A.2 Recover Homographies'],
+              ['warp', 'A.3 Warp the Images'],
+              ['mosaic', 'A.4 Blend into a Mosaic'],
+              ['cylinder', 'A.5 Cylindrical Mosaic'],
+              ['corners', 'B.1 Harris Corner Detection'],
+              ['descriptors', 'B.2 Feature Descriptor Extraction'],
+              ['matching', 'B.3 Feature Matching'],
+              ['auto', 'B.4 RANSAC for Robust Homography'],
+              ['roll', 'B.5 Bells & Whistles: Rotation Invariance'],
+            ].map(([id, title]) => (
               <button
                 key={id}
                 type="button"
@@ -257,7 +257,6 @@ export default function ProjectFour() {
                 className="block w-full text-left rounded-lg p-3 hover:bg-slate-800/60 transition-colors"
               >
                 <div className="font-semibold text-white">{title}</div>
-                <p className="text-slate-400 mt-1">{blurb}</p>
               </button>
             ))}
           </nav>
@@ -268,25 +267,17 @@ export default function ProjectFour() {
             <Camera className="w-5 h-5 text-cyan-400" />
             <span>Part A.1: Shoot the Pictures</span>
           </h2>
-          <p className="text-slate-300 leading-relaxed">
-            I took all of these myself. I stood in one place and turned the
-            phone between shots, so the views share the same center of
-            projection. Each set is a left, a center, and a right, with a large
-            overlap. The courtyard is outdoors. The living room and the laundry
-            room are indoors.
-          </p>
-          <Figure
-            src={publicUrl('p4/courtyard_sources.jpg')}
-            caption="Courtyard. Left, center, and right. The building, the chairs, and the tile show up in more than one shot"
-          />
-          <Figure
-            src={publicUrl('p4/livingroom_sources.jpg')}
-            caption="Living room. Left, center, and right. The window sits in all three"
-          />
-          <Figure
-            src={publicUrl('p4/laundry_sources.jpg')}
-            caption="Laundry room. Left, center, and right. The machines and the window sit in the overlap"
-          />
+          <Figure src={publicUrl('p4/courtyard_sources.jpg')} caption="Courtyard: left, center, right" />
+          <Figure src={publicUrl('p4/livingroom_sources.jpg')} caption="Living room: left, center, right" />
+          <Figure src={publicUrl('p4/laundry_sources.jpg')} caption="Laundry: left, center, right" />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              Three scenes, three overlapping shots each, taken from the same spot. The center photo is the one the sides get lined up to.
+            </p>
+          </div>
         </section>
 
         <section id="homography" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-8">
@@ -294,11 +285,6 @@ export default function ProjectFour() {
             <Code2 className="w-5 h-5 text-cyan-400" />
             <span>Part A.2: Recover Homographies</span>
           </h2>
-          <p className="text-slate-300 leading-relaxed">
-            Each matching point in one photo and the other gives two rows of the
-            system that solves for H. Stack many of those rows and solve for the
-            eight unknowns.
-          </p>
           <CodeBlock>{`[x, y, 1, 0, 0, 0, -x'x, -x'y] h = x'
 [0, 0, 0, x, y, 1, -y'x, -y'y] h = y'`}</CodeBlock>
 
@@ -306,7 +292,7 @@ export default function ProjectFour() {
             <h3 className="text-base font-semibold text-white">Courtyard</h3>
             <Figure
               src={publicUrl('p4/courtyard_matches.jpg')}
-              caption="Courtyard matches. Top left→center, bottom right→center"
+              caption="Courtyard: left → center, right → center"
             />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <PairBlock
@@ -330,7 +316,7 @@ export default function ProjectFour() {
             <h3 className="text-base font-semibold text-white">Living room</h3>
             <Figure
               src={publicUrl('p4/livingroom_matches.jpg')}
-              caption="Living room matches. Top left→center, bottom right→center"
+              caption="Living room: left → center, right → center"
             />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <PairBlock
@@ -354,7 +340,7 @@ export default function ProjectFour() {
             <h3 className="text-base font-semibold text-white">Laundry</h3>
             <Figure
               src={publicUrl('p4/laundry_matches.jpg')}
-              caption="Laundry matches. Top left→center, bottom right→center"
+              caption="Laundry: left → center, right → center"
             />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <PairBlock
@@ -373,6 +359,14 @@ export default function ProjectFour() {
               />
             </div>
           </div>
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              Each clicked pair adds two rows to that system. Four pairs determine H, and I used eight, so the fit is least squares. That matrix maps a side photo onto the center.
+            </p>
+          </div>
         </section>
 
         <section id="warp" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
@@ -380,53 +374,20 @@ export default function ProjectFour() {
             <Grid3x3 className="w-5 h-5 text-cyan-400" />
             <span>Part A.3: Warp the Images</span>
           </h2>
-          <p className="text-slate-300 leading-relaxed">
-            Both warps work backward. For each pixel in the output, I ask H
-            where that pixel came from in the source photo, then read the color
-            there. Going forward from the source would leave holes. Nearest
-            neighbor grabs the closest source pixel. Bilinear mixes the four
-            around it.
-          </p>
-          <CodeBlock>{`I(x, y) = I00 (x1-x)(y1-y) + I10 (x-x0)(y1-y)
-         + I01 (x1-x)(y-y0) + I11 (x-x0)(y-y0)`}</CodeBlock>
-          <p className="text-slate-300 leading-relaxed">
-            I checked the warp on the front of a fridge and on a microwave
-            door. Both are rectangles in the room and skewed shapes in the
-            photo. I marked the four corners and mapped them onto a rectangle
-            whose width and height are the average edge lengths of that shape.
-            A small margin sits around it so the object fills the result.
-          </p>
-          <Figure
-            src={publicUrl('p4/fridge_marked.jpg')}
-            caption="Fridge. The outline is the front face: both doors and the freezer drawer"
-          />
-          <Figure
-            src={publicUrl('p4/fridge_bilinear.jpg')}
-            caption="Bilinear result. The doors, the handles, and the paper look front-facing. A sliver of the left side is still visible, because that side faces a different way"
-          />
-          <Figure
-            src={publicUrl('p4/microwave_marked.jpg')}
-            caption="Microwave. The outline is the door glass"
-          />
-          <Figure
-            src={publicUrl('p4/microwave_bilinear.jpg')}
-            caption="Bilinear result. The glass is a flat window, with the handle along the right edge"
-          />
-          <p className="text-slate-300 leading-relaxed">
-            On the fridge, nearest neighbor took 0.07 seconds and bilinear took
-            0.11 seconds. The crop below is the same spot of both. Nearest
-            neighbor turns the handle and the paper into steps. Bilinear
-            follows the curve and keeps the writing readable. The mosaics use
-            bilinear.
-          </p>
-          <Figure
-            src={publicUrl('p4/fridge_compare.jpg')}
-            caption="Fridge handle and paper. Left is nearest neighbor, right is bilinear"
-          />
-          <Figure
-            src={publicUrl('p4/microwave_compare.jpg')}
-            caption="Microwave door mesh. Nearest neighbor breaks the dots into blocks. Bilinear keeps the screen even"
-          />
+          <Figure src={publicUrl('p4/fridge_marked.jpg')} caption="Fridge, corners marked" />
+          <Figure src={publicUrl('p4/fridge_bilinear.jpg')} caption="Fridge, bilinear" />
+          <Figure src={publicUrl('p4/microwave_marked.jpg')} caption="Microwave, corners marked" />
+          <Figure src={publicUrl('p4/microwave_bilinear.jpg')} caption="Microwave, bilinear" />
+          <Figure src={publicUrl('p4/fridge_compare.jpg')} caption="Fridge: nearest neighbor vs bilinear" />
+          <Figure src={publicUrl('p4/microwave_compare.jpg')} caption="Microwave: nearest neighbor vs bilinear" />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              The warp goes backwards, and bilinear reads the four pixels around the source point. Nearest neighbor looks blocky on the handle and the door mesh, so the mosaics use bilinear.
+            </p>
+          </div>
         </section>
 
         <section id="mosaic" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
@@ -434,56 +395,18 @@ export default function ProjectFour() {
             <Blend className="w-5 h-5 text-cyan-400" />
             <span>Part A.4: Blend the Images into a Mosaic</span>
           </h2>
-          <p className="text-slate-300 leading-relaxed">
-            The center photo stays where it is. The left and right photos are
-            stretched into that same view. I send the four corners of each
-            photo through its H, take the bounding box of everything, and
-            stretch all three into that shared canvas.
-          </p>
-          <p className="text-slate-300 leading-relaxed">
-            Dropping the side photos on top of the center leaves a hard edge
-            wherever one photo starts. So each photo also gets a weight that is
-            high in the middle and falls toward the border. I stretch the
-            weight with the photo. Where two photos overlap, the weights are
-            turned into a mix, so the middle of a photo counts more than its
-            edge.
-          </p>
-          <CodeBlock>{`out = Σ (image · weight) / Σ weight`}</CodeBlock>
-          <p className="text-slate-300 leading-relaxed">
-            On the courtyard, a hard paste draws a vertical line through the
-            windows and the tile, where the brightness changes. The soft mix
-            takes that line out. The three bilinear stretches for this mosaic
-            took 1.37 seconds.
-          </p>
-          <Figure
-            src={publicUrl('p4/courtyard_hard.jpg')}
-            caption="Courtyard, side photos pasted on top of the center. The seam is a bright vertical cut"
-          />
-          <Figure
-            src={publicUrl('p4/courtyard_mosaic.jpg')}
-            caption="Courtyard, same lineup, soft mix. The windows, the tile, and the chairs meet without a cut"
-          />
-          <p className="text-slate-300 leading-relaxed">
-            The living room lines up on the window and the chairs. The right
-            wall and the plant show up twice. The phone shifted a little
-            between shots, and that wall is close, so one stretch cannot seat
-            the near wall and the far window together. The black wedges are
-            parts of the canvas no photo covers.
-          </p>
-          <Figure
-            src={publicUrl('p4/livingroom_mosaic.jpg')}
-            caption="Living room. The back wall agrees. The right wall and the plant show up twice, and the ceiling has an uncovered notch"
-          />
-          <p className="text-slate-300 leading-relaxed">
-            The laundry room is the tightest of the three, and it still
-            stitches. The window bars and the machines continue across the
-            seam. The upper cabinets keep a faint second edge. This mosaic took
-            2.96 seconds to stretch.
-          </p>
-          <Figure
-            src={publicUrl('p4/laundry_mosaic.jpg')}
-            caption="Laundry room. The window and the machines line up. The cabinets keep a faint second edge"
-          />
+          <Figure src={publicUrl('p4/courtyard_hard.jpg')} caption="Courtyard, hard seam" />
+          <Figure src={publicUrl('p4/courtyard_mosaic.jpg')} caption="Courtyard, blended" />
+          <Figure src={publicUrl('p4/livingroom_mosaic.jpg')} caption="Living room, blended" />
+          <Figure src={publicUrl('p4/laundry_mosaic.jpg')} caption="Laundry, blended" />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              Pasting the side photos on top leaves a hard seam. Letting each photo count more in the middle and fade at the edges gets rid of it. The living room still doubles the near wall, because the phone moved a little and that wall is close.
+            </p>
+          </div>
         </section>
 
         <section id="cylinder" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
@@ -491,35 +414,104 @@ export default function ProjectFour() {
             <Aperture className="w-5 h-5 text-cyan-400" />
             <span>Part A.5: Cylindrical Mosaic</span>
           </h2>
-          <p className="text-slate-300 leading-relaxed">
-            A wide turn mapped onto a flat plane bends the outer photos. I also
-            built the courtyard on a cylinder. Each output pixel has an angle
-            and a height. I turn those back into a pixel in one of the
-            original photos and read the color once, with the same bilinear
-            mix. On the cylinder, the side photos are just left-right shifts of
-            the center, estimated from the same good matches.
-          </p>
-          <CodeBlock>{`θ = arctan((x - cx) / f)
-x = f · tan(θ) + cx
-y = y_cyl / cos(θ) + cy`}</CodeBlock>
-          <p className="text-slate-300 leading-relaxed">
-            The radius of the cylinder is the focal length in pixels. A 26 mm
-            lens on this 900-pixel-wide photo would be about 650 px. I tried
-            radii from 0.35 to 2.4 times the width and kept the one where the
-            matched points agree on a single shift. That radius is 1781 px.
-            The leftover miss is 0.00072 in angle units. The left photo sits
-            292 px to the left of center, the right photo 344 px to the right.
-          </p>
-          <p className="text-slate-300 leading-relaxed">
-            Because the radius is large, the bow is gentle. The building’s
-            vertical edges stay straight across all three photos, and the top
-            and bottom of the canvas curve a little. The same soft mix blends
-            the overlap.
-          </p>
+          <Figure src={publicUrl('p4/courtyard_cylinder.jpg')} caption="Courtyard, cylinder, f = 1781 px" />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              The courtyard also sits on a cylinder with focal length 1781 px. The radius is large, so the bow is gentle and the window lines stay vertical.
+            </p>
+          </div>
+        </section>
+
+        <section id="corners" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Scan className="w-5 h-5 text-cyan-400" />
+            <span>Part B.1: Harris Corner Detection</span>
+          </h2>
+          <Figure src={publicUrl('p4/b_harris.jpg')} caption="Detected corners without ANMS, courtyard center (7,511)" />
+          <Figure src={publicUrl('p4/b_anms.jpg')} caption="Detected corners with ANMS, courtyard center (500)" />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              Harris finds 7,511 corners, piled up on the windows and the tile. ANMS keeps the 500 that each have the most space around them.
+            </p>
+          </div>
+        </section>
+
+        <section id="descriptors" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Grid3x3 className="w-5 h-5 text-cyan-400" />
+            <span>Part B.2: Feature Descriptor Extraction</span>
+          </h2>
           <Figure
-            src={publicUrl('p4/courtyard_cylinder.jpg')}
-            caption="Courtyard on a cylinder of radius 1781 px. The outer border bows. The window grid stays vertical"
+            src={publicUrl('p4/b_descriptors.jpg')}
+            caption="Extracted features: normalized 8×8 descriptors, sampled from 40×40 windows"
           />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              Each corner becomes an 8×8 patch averaged out of a blurred 40×40 window. Subtracting the mean and dividing by the standard deviation takes the brightness out, so a corner in shadow can still match the same corner in sunlight.
+            </p>
+          </div>
+        </section>
+
+        <section id="matching" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Code2 className="w-5 h-5 text-cyan-400" />
+            <span>Part B.3: Feature Matching</span>
+          </h2>
+          <Figure src={publicUrl('p4/b_courtyard_matches.jpg')} caption="Matched features, courtyard: 217 between left and center, 198 between right and center. 12 of each are drawn" />
+          <Figure src={publicUrl('p4/b_livingroom_matches.jpg')} caption="Matched features, living room: 85 between left and center, 94 between right and center. 12 of each are drawn" />
+          <Figure src={publicUrl('p4/b_laundry_matches.jpg')} caption="Matched features, laundry: 21 between left and center, 100 between right and center. 12 of each are drawn" />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              A pair is kept when the closest patch is clearly closer than the second closest. The counts above are the ones that also agree on one homography. The pictures only draw 12 of those, spread across the photo.
+            </p>
+          </div>
+        </section>
+
+        <section id="auto" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Images className="w-5 h-5 text-cyan-400" />
+            <span>Part B.4: RANSAC for Robust Homography</span>
+          </h2>
+          <Figure src={publicUrl('p4/b_courtyard_compare.jpg')} caption="Courtyard: manual vs automatic" />
+          <Figure src={publicUrl('p4/b_livingroom_compare.jpg')} caption="Living room: manual vs automatic" />
+          <Figure src={publicUrl('p4/b_laundry_compare.jpg')} caption="Laundry: manual vs automatic" />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              RANSAC samples four of the B.3 matched features at a time to estimate H, then keeps the homography the rest of the matches agree with. The warp and blend are the same as Part A, and the automatic mosaics land in about the same place as the ones I clicked.
+            </p>
+          </div>
+        </section>
+
+        <section id="roll" className="p-6 rounded-xl bg-slate-900/90 border border-slate-800 space-y-6">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <RotateCw className="w-5 h-5 text-cyan-400" />
+            <span>Part B.5: Bells & Whistles: Rotation Invariance</span>
+          </h2>
+          <Figure src={publicUrl('p4/b_rotate_flat.jpg')} caption="Without rotation invariance: upright patches on a 40° roll, 0 correct" />
+          <Figure src={publicUrl('p4/b_rotate_turned.jpg')} caption="With rotation invariance: patches turned with the corner, 229 correct" />
+          <div className="p-4 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-2">
+            <h3 className="text-sm font-semibold text-cyan-400 font-mono uppercase tracking-wider">
+              Takeaway
+            </h3>
+            <p className="text-slate-300 leading-relaxed">
+              Upright patches get 0 of the corners right on a 40° roll, and turning each patch with its corner gets 229 right. The mosaics still use upright patches, since I only turned the phone side to side.
+            </p>
+          </div>
         </section>
       </main>
 

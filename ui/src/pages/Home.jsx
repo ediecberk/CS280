@@ -189,15 +189,20 @@ export default function Home() {
     },
     {
       id: 'project-4',
-      title: 'Project 4: Image Warping and Mosaicing',
+      title: 'Project 4: Stitching Photo Mosaics',
       description:
-        'Part A stitches photos I took from one spot into wider views. Side photos are lined up with the center, stretched to match, and blended. The same stretch makes a fridge and a microwave door look flat. The courtyard is also wrapped onto a cylinder.',
+        'Part A stitches photos from points I clicked. Part B finds the points.',
       highlights: [
         'A.1: Courtyard, living room, and laundry, three views each',
         'A.2: computeH finds the lineup; 723 good matches on the courtyard at 1.05 px',
         'A.3: Nearest neighbor and bilinear sampling on the fridge and microwave',
         'A.4: Three mosaics, with a hard seam next to a soft blend',
         'A.5: Courtyard on a cylinder, radius 1781 px',
+        'B.1: 7,511 Harris corners on the courtyard, then 500 spread out',
+        'B.2: An 8×8 patch from the 40×40 window around each corner',
+        'B.3: Keep a match only when it is clearly closer than the runner-up',
+        'B.4: The clicked mosaic next to the automatic one, for all three scenes',
+        'B.5: Rotation invariance, so a 40° roll still finds the same corners',
       ],
       internalRoute: '/project-4',
     },
